@@ -1,0 +1,45 @@
+"pip install tk"
+import tkinter as tk
+
+# Preloaded advice database
+advice_data = {
+    "confused": [
+        "Take a breath before reacting.",
+        "Ask yourself: What do I truly need?",
+        "Not every silence is rejection."
+    ],
+    "sad": [
+        "You are allowed to feel this way.",
+        "Healing takes time. Be gentle.",
+        "You're not alone in this."
+    ],
+    "angry": [
+        "Pause before you speak.",
+        "Anger often hides deeper hurt.",
+        "Channel your energy into clarity, not conflict."
+    ]
+}
+
+# Basic chatbot logic
+def get_advice():
+    user_input = entry.get().lower()
+    response = "I don't understand that mood."
+    if user_input in advice_data:
+        response = advice_data[user_input][0]
+    chat_log.insert(tk.END, f"You: {user_input}\nBot: {response}\n\n")
+    entry.delete(0, tk.END)
+
+# GUI setup
+root = tk.Tk()
+root.title("Relationship Advice Bot")
+
+chat_log = tk.Text(root, height=15, width=50)
+chat_log.pack()
+
+entry = tk.Entry(root, width=40)
+entry.pack()
+
+send_button = tk.Button(root, text="Send", command=get_advice)
+send_button.pack()
+
+root.mainloop()
