@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relationship Advice Chatbot</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            min-height: 100vh; 
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container { 
+            max-width: 800px; 
+            width: 100%;
+            background: white; 
+            border-radius: 15px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+            overflow: hidden;
+        }
+        .header { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); 
+            color: white; 
+            padding: 30px 20px; 
+            text-align: center; 
+        }
+        .header h1 { 
+            margin-bottom: 10px; 
+            font-size: 2.5em;
+        }
+        .disclaimer { 
+            background: #fff3cd; 
+            color: #856404; 
+            padding: 15px; 
+            text-align: center; 
+            font-size: 14px; 
+            border-bottom: 2px solid #ffeaa7; 
+        }
+        .chat-container { 
+            height: 400px; 
+            overflow-y: auto; 
+            padding: 20px; 
+            background: #f8f9fa; 
+        }
+        .message { 
+            margin-bottom: 15px; 
+            padding: 15px 20px; 
+            border-radius: 20px; 
+            max-width: 85%; 
+            animation: fadeIn 0.3s ease-in; 
+            line-height: 1.4;
+        }
+        .user-message { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            margin-left: auto; 
+            border-bottom-right-radius: 5px; 
+        }
+        .bot-message { 
+            background: white; 
+            border: 2px solid #e0e0e0; 
+            border-bottom-left-radius: 5px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .typing-indicator { 
+            display: none; 
+            padding: 12px 20px; 
+            color: #666; 
+            font-style: italic; 
+        }
+        .input-container { 
+            display: flex; 
+            padding: 20px; 
+            background: white; 
+            border-top: 2px solid #f0f0f0; 
+        }
+        #user-input { 
+            flex: 1; 
+            padding: 15px; 
+            border: 2px solid #ddd; 
+            border-radius: 25px; 
+            outline: none; 
+            font-size: 16px; 
+            transition: border-color 0.3s;
+        }
+        #user-input:focus { 
+            border-color: #667eea; 
+        }
+        #send-btn { 
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%); 
+            color: white; 
+            border: none; 
+            padding: 15px 25px; 
+            margin-left: 10px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            transition: transform 0.2s;
+            font-weight: bold;
+        }
+        #send-btn:hover { 
+            transform: translateY(-2px); 
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .header h1 { font-size: 2em; }
+            .chat-container { height: 300px; }
+            .message { max-width: 90%; padding: 12px 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💖 Relationship Helper</h1>
+            <p>Your AI friend for relationship advice</p>
+        </div>
+        
+        <div class="disclaimer">
+            ⚠️ Remember: I'm an AI assistant, not a professional therapist. For serious issues, please consult a qualified professional.
+        </div>
+
+        <div class="chat-container" id="chat-container">
+            <div class="message bot-message">
+                Hi there! 👋 I'm here to help with relationship questions. You can ask me about communication, conflicts, trust, or anything else on your mind. What would you like to talk about today?
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typing">Relationship Helper is typing...</div>
+
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="Type your relationship question here..." autocomplete="off">
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced AI response system
+        class RelationshipAdvisor {
+            constructor() {
+                this.conversationHistory = [];
+            }
+
+            generateResponse(userMessage) {
+                const message = userMessage.toLowerCase();
+                
+                // Comprehensive response database
+                const responses = {
+                    greeting: [
+                        "Hello! I'm here to help with relationship advice. What's been on your mind lately? 💭",
+                        "Hi there! Relationships can be challenging sometimes. What would you like to discuss today?",
+                        "Welcome! I'm your relationship helper. Feel free to share what you're going through."
+                    ],
+                    communication: [
+                        "Active listening is key - try repeating back what you heard to ensure understanding before responding.",
+                        "Use 'I feel' statements instead of blaming language. For example: 'I feel hurt when...' rather than 'You always...'",
+                        "Schedule regular 'relationship check-ins' where you can talk without distractions or interruptions."
+                    ],
+                    conflict: [
+                        "When conflicts arise, take a 20-minute break if things get too heated. Return to the discussion when both are calm.",
+                        "Focus on one issue at a time. Avoid bringing up past arguments - stay present-focused.",
+                        "Look for compromises where both people feel their needs are being considered and respected."
+                    ],
+                    trust: [
+                        "Trust is built through consistent, reliable behavior over time. Small, dependable actions matter most.",
+                        "If trust has been damaged, consider seeking couples counseling to rebuild in a safe, guided environment.",
+                        "Open communication about expectations and boundaries helps prevent trust issues from developing."
+                    ],
+                    dating: [
+                        "The early dating phase should be about having fun and getting to know each other naturally.",
+                        "Be authentic from the beginning - pretending to be someone you're not rarely leads to lasting connections.",
+                        "Pay attention to how they treat others, not just how they treat you on dates."
+                    ],
+                    breakup: [
+                        "Breakups are difficult, but they're also opportunities for growth and self-discovery.",
+                        "Allow yourself to grieve the relationship - it's normal to feel sadness, anger, or confusion.",
+                        "Focus on self-care and rebuilding your independence after a relationship ends."
+                    ],
+                    default: [
+                        "That sounds challenging. Could you tell me more about how this situation is affecting you?",
+                        "I understand this is difficult. What have you considered doing so far to address this?",
+                        "Every relationship is unique. What would your ideal resolution look like in this situation?",
+                        "It's important to prioritize your emotional well-being. How are you taking care of yourself through this?"
+                    ]
+                };
+
+                // Smart keyword matching
+                if (/(hello|hi|hey|greetings)/i.test(message)) {
+                    return this.getRandomResponse(responses.greeting);
+                }
+                if (/(communicat|talk|listen|conversation)/i.test(message)) {
+                    return this.getRandomResponse(responses.communication);
+                }
+                if (/(fight|argu|conflict|disagree|angry)/i.test(message)) {
+                    return this.getRandomResponse(responses.conflict);
+                }
+                if (/(trust|jealous|honest|secret|lie)/i.test(message)) {
+                    return this.getRandomResponse(responses.trust);
+                }
+                if (/(date|dating|romance|new relationship)/i.test(message)) {
+                    return this.getRandomResponse(responses.dating);
+                }
+                if (/(break up|breakup|separat|divorce|end relationship)/i.test(message)) {
+                    return this.getRandomResponse(responses.breakup);
+                }
+                
+                return this.getRandomResponse(responses.default);
+            }
+
+            getRandomResponse(responseArray) {
+                return responseArray[Math.floor(Math.random() * responseArray.length)];
+            }
+        }
+
+        // Initialize chatbot
+        const advisor = new RelationshipAdvisor();
+
+        // Chat functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatContainer = document.getElementById('chat-container');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+            const typingIndicator = document.getElementById('typing');
+
+            function addMessage(message, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = isUser ? 'message user-message' : 'message bot-message';
+                messageDiv.textContent = message;
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function sendMessage() {
+                const message = userInput.value.trim();
+                if (message === '') return;
+
+                addMessage(message, true);
+                userInput.value = '';
+
+                typingIndicator.style.display = 'block';
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    const response = advisor.generateResponse(message);
+                    addMessage(response, false);
+                }, 800 + Math.random() * 1200);
+            }
+
+            // Event listeners
+            sendBtn.addEventListener('click', sendMessage);
+            userInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            userInput.focus();
+        });
+    </script>
+</body>
+</html>
